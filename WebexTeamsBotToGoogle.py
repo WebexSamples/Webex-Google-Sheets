@@ -101,11 +101,11 @@ def main(in_message):
     """
         This method is used for:
         -retrieving message text, when the webhook is triggered with a message
-        -Then post the message to a blank Google Spreadsheet to notify a user there came a Spark message from his bot.
+        -Then post the message to a blank google spreadsheet to confirm whether the message was well received.
         -Creates a Sheets API service object:
         https://docs.google.com/spreadsheets/d/1ZDu8T6x77KUSh-Hq4fzW9NCgTx0EU_rWI7lWuPCOEjc/edit
         """
-    print("This is the message mentioned your bot: {0}".format(in_message))
+    print("Message sent to bot: {0}".format(in_message))
     #The above print function is used to verify whether the retrieved message content is correct via terminal.
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -114,24 +114,11 @@ def main(in_message):
     service = discovery.build('sheets', 'v4', http=http,
 discoveryServiceUrl=discoveryUrl)
                     
-    spreadsheetId = 'Your Google spreadsheetId'
+    spreadsheetId = '1ZDu8T6x77KUSh-Hq4fzW9NCgTx0EU_rWI7lWuPCOEjc'
     rangeName = 'A1'
     body = {"values":[[in_message]]}
     result = service.spreadsheets().values().append(
 spreadsheetId=spreadsheetId, range=rangeName, valueInputOption = 'RAW', insertDataOption = 'INSERT_ROWS', body = body).execute()
-    return 'ok'
-
-def send_tropo(message):
-    """
-       This method is used for:
-       -Sending the retrieved message to some one's cell phone via a Tropo SMS application just to notify a Spark message from his Bot was received in the Google Spreadsheet.
-       """
-    url = 'https://api.tropo.com/1.0/sessions'
-    headers = {'accept':'application/json','content-type':'application/json'}
-    values = {'token':'messaging token of your Tropo SMS application', 'msg': message }
-    data = json.dumps(values)
-    req = urllib2.Request(url = url , data = data, headers = headers)
-    response = urllib2.urlopen(req)
     return 'ok'
 
 run_itty(server='wsgiref', host='0.0.0.0', port=10080)
